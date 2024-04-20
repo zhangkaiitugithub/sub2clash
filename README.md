@@ -1,3 +1,6 @@
+> [!important]
+> [moved to forgejo](https://git.nite07.com/nite07/sub2clash)
+
 # sub2clash
 
 将订阅链接转换为 Clash、Clash.Meta 配置  
