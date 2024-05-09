@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sub2clash/api/handler"
-	"sub2clash/config"
+	"sub2clash/constant"
 	"sub2clash/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,6 @@ var staticFiles embed.FS
 func SetRoute(r *gin.Engine) {
 	r.Use(middleware.ZapLogger())
 
-	// 使用内嵌的模板文件
 	tpl, err := template.ParseFS(staticFiles, "static/*")
 	if err != nil {
 		log.Fatalf("Error parsing templates: %v", err)
@@ -32,10 +31,7 @@ func SetRoute(r *gin.Engine) {
 	)
 	r.GET(
 		"/", func(c *gin.Context) {
-			version := config.Version
-			if len(config.Version) > 7 {
-				version = config.Version[:7]
-			}
+			version := constant.Version
 			c.HTML(
 				200, "index.html", gin.H{
 					"Version": version,
@@ -43,33 +39,9 @@ func SetRoute(r *gin.Engine) {
 			)
 		},
 	)
-	r.GET(
-		"/clash", func(c *gin.Context) {
-			handler.SubmodHandler(c)
-		},
-	)
-	r.GET(
-		"/meta", func(c *gin.Context) {
-			handler.SubHandler(c)
-		},
-	)
-	r.GET(
-		"/s/:hash", func(c *gin.Context) {
-			handler.ShortLinkGetConfigHandler(c)
-		},
-	)
-	r.GET(
-		"/short", func(c *gin.Context) {
-			handler.ShortLinkGetUrlHandler(c)
-		})
-	r.POST(
-		"/short", func(c *gin.Context) {
-			handler.ShortLinkGenHandler(c)
-		},
-	)
-	r.PUT(
-		"/short", func(c *gin.Context) {
-			handler.ShortLinkUpdateHandler(c)
-		},
-	)
+	r.GET("/clash", handler.SubmodHandler)
+	r.GET("/meta", handler.SubHandler)
+	r.GET("/s/:hash", handler.GetRawConfHandler)
+	r.POST("/short", handler.GenerateLinkHandler)
+	r.PUT("/short", handler.UpdateLinkHandler)
 }

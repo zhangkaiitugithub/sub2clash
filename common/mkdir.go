@@ -1,4 +1,4 @@
-package utils
+package common
 
 import (
 	"errors"
@@ -25,6 +25,9 @@ func MkEssentialDir() error {
 	}
 	if err := MKDir("logs"); err != nil {
 		return errors.New("create logs dir failed" + err.Error())
+	}
+	if err := MKDir("data"); err != nil {
+		return errors.New("create data dir failed" + err.Error())
 	}
 	return nil
 }
